@@ -1,4 +1,4 @@
-<h1>Fmvvm</h1>
+<h1>Flutter Mvvm</h1>
 <p >    
 <a href="https://img.shields.io/badge/License-MIT-green"><img     
 align="center" src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>      
@@ -34,13 +34,13 @@ align="center" src="https://img.shields.io/pub/v/injectable.svg?" alt="pub versi
 ```yaml  
 dependencies:  
   # add injectable to your dependencies  
-  fmvvm:  
+  flutter_mvvm:  
   # add get_it  
   get_it:  
   
 dev_dependencies:  
   # add the generator to your dev_dependencies  
-  fmvvm_generator:  
+  flutter_mvvm_generator:  
   # add build runner if not already added  
   build_runner:  
 ```  
@@ -219,7 +219,7 @@ class ApiProvider {}
 
 ## Disposing of singletons
 
-GetIt provides a way to dispose singleton and lazySingleton instances by passing a dispose callback to the register function.  FMVVM works in the static realm, which means it's not possible to pass instance functions to your annotation; luckily fmvvm provides two simple ways to handle instance disposal.
+GetIt provides a way to dispose singleton and lazySingleton instances by passing a dispose callback to the register function.  Flutter_mvvm works in the static realm, which means it's not possible to pass instance functions to your annotation; luckily flutter_mvvm provides two simple ways to handle instance disposal.
 
 1- Annotating an instance method inside of your singleton class with `@disposeMethod`.
 
@@ -252,7 +252,7 @@ FutureOr disposeDataSource(DataSource instance){
 
 ## FactoryMethod and PostConstruct Annotations
 
-As the name suggests `@FactoryMethod` annotation is used to tell fmvvm which method to use to create the dependency, and that includes named constructors, factory constructs and static create methods.
+As the name suggests `@FactoryMethod` annotation is used to tell flutter_mvvm which method to use to create the dependency, and that includes named constructors, factory constructs and static create methods.
 
 ```dart  
 @injectable  
@@ -311,7 +311,7 @@ class ApiClient {
 }  
 ```  
 
-Now simply annotate your class with `@injectable` and tell fmvvm to use that static initializer method as a factory method using the `@factoryMethod` annotation
+Now simply annotate your class with `@injectable` and tell flutter_mvvm to use that static initializer method as a factory method using the `@factoryMethod` annotation
 
 ```dart  
 @injectable // or lazy/singleton  
@@ -324,7 +324,7 @@ class ApiClient {
 }  
 ```  
 
-fmvvm will automatically register it as an asynchronous factory because the return type is a Future.
+flutter_mvvm will automatically register it as an asynchronous factory because the return type is a Future.
 
 #### Generated Code:
 
@@ -434,9 +434,9 @@ factoryParam<BackendService, String, dynamic>(
 
 ### Using a register module (for third party dependencies)
 
-if you declare a module member as a method instead of a simple accessor, fmvvm will treat it as a factory method, meaning it will inject its parameters as it would with a regular constructor.
+if you declare a module member as a method instead of a simple accessor, flutter_mvvm will treat it as a factory method, meaning it will inject its parameters as it would with a regular constructor.
 
-This is similar to how if you annotate an injected param with `@factoryParam` fmvvm will treat it as a factory param.
+This is similar to how if you annotate an injected param with `@factoryParam` flutter_mvvm will treat it as a factory param.
 
 ```dart  
 @module  
@@ -564,7 +564,7 @@ You can assign multiple environment names to the same class.
 class ServiceA {}  
 ```  
 
-Alternatively use the env property in fmvvm and subs to assign environment names to your dependencies.
+Alternatively use the env property in flutter_mvvm and subs to assign environment names to your dependencies.
 
 ```dart  
 @Injectable(as: Service, env: [Environment.dev, Environment.test])  
@@ -598,7 +598,7 @@ abstract class RegisterModule {
 
 ### Providing custom initializers
 
-In some cases you'd need to register instances that are asynchronous or singleton instances or just have a custom initializer and that's a bit hard for fmvvm to figure out on its own, so you need to tell fmvvm how to initialize them:
+In some cases you'd need to register instances that are asynchronous or singleton instances or just have a custom initializer and that's a bit hard for flutter_mvvm to figure out on its own, so you need to tell flutter_mvvm how to initialize them:
 
 ```dart  
 @module  
@@ -612,7 +612,7 @@ abstract class RegisterModule {
   Dio dio(@Named('BaseUrl') String url) => Dio(BaseOptions(baseUrl: url));  
   
   // same thing works for instances that's gotten asynchronous.  
-  // all you need to do is wrap your instance with a future and tell fmvvm how  
+  // all you need to do is wrap your instance with a future and tell flutter_mvvm how  
   // to initialize it  
   @preResolve // if you need to pre resolve the value  
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();  
@@ -637,7 +637,7 @@ To use auto-register create a file with the name **build.yaml** in the same dire
 targets:  
   $default:  
     builders:  
-      fmvvm_generator:injectable_builder:  
+      flutter_mvvm_generator:injectable_builder:  
         options:  
           auto_register: true  
           # auto registers any class with a name matches the given pattern  
@@ -650,7 +650,7 @@ targets:
 
 ## Manual order
 
-By default fmvvm tries to re-order dependencies based on their dependents, meaning if `A` depends on `B`, `B` will be registered first.
+By default flutter_mvvm tries to re-order dependencies based on their dependents, meaning if `A` depends on `B`, `B` will be registered first.
 
 You can manually decide the order of a specific dependency by giving it a negative number to register it before everything else or a positive number to register it after everything else.
 
@@ -667,7 +667,7 @@ class Service{}
 
 GetIt v5.0 introduced scopes support, which allows registration of related dependencies in a different scope, so they can be initialized only when needed and disposed of when they're not. [More on that here.](https://pub.dev/packages/get_it#scopes)
 
-To use `GetIt` scopes using fmvvm you simply annotate the dependencies that are meant to be registered in a different scope with `@Scope('scope-name')` or pass in the scope name to Injectable or its subs like so `@Injectable(scope: 'scope-name')`.
+To use `GetIt` scopes using flutter_mvvm you simply annotate the dependencies that are meant to be registered in a different scope with `@Scope('scope-name')` or pass in the scope name to Injectable or its subs like so `@Injectable(scope: 'scope-name')`.
 
 dependencies tagged with a scope name will be generated inside of a separate init method than the other main-scope dependencies.  
 e.g.
@@ -714,7 +714,7 @@ class AwesomePackageModule extends MicroPackageModule {
  }}  
 ```  
 
-By default fmvvm will automatically include all `MicroPackagesModules` in the project directory unless the `includeMicroPackages` flag inside of `@FmvvmInit` is set to false.
+By default flutter_mvvm will automatically include all `MicroPackagesModules` in the project directory unless the `includeMicroPackages` flag inside of `@FmvvmInit` is set to false.
 
 ```dart
 @FmvvmInit(includeMicroPackages: false)
