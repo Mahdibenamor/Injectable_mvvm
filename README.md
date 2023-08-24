@@ -1,17 +1,18 @@
-<h1>Injectable</h1>
+<h1>Fmvvm</h1>
 <p >    
 <a href="https://img.shields.io/badge/License-MIT-green"><img     
 align="center" src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>      
 <a href="https://github.com/Milad-Akarie/injectable/stargazers"><img align="center" src="https://img.shields.io/github/stars/Milad-Akarie/injectable?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>      
 <a href="https://pub.dev/packages/injectable"><img     
 align="center" src="https://img.shields.io/pub/v/injectable.svg?" alt="pub version"></a>      
-<a href="https://www.buymeacoffee.com/miladakarie" target="_blank"><img align="center" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>    
+<a href="https://www.buymeacoffee.com/mahdibenamor"target="_blank"><img align="center" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>    
 <p >  
   
 ---  
 
 - [Installation](#installation)
 - [Setup](#setup)
+- [Registering ViewModels](#registering-view-models)
 - [Registering factories](#registering-factories)
 - [Registering singletons](#registering-singletons)
 - [Disposing of singletons](#disposing-of-singletons)
@@ -33,13 +34,13 @@ align="center" src="https://img.shields.io/pub/v/injectable.svg?" alt="pub versi
 ```yaml  
 dependencies:  
   # add injectable to your dependencies  
-  injectable:  
+  fmvvm:  
   # add get_it  
   get_it:  
   
 dev_dependencies:  
   # add the generator to your dev_dependencies  
-  injectable_generator:  
+  fmvvm_generator:  
   # add build runner if not already added  
   build_runner:  
 ```  
@@ -49,10 +50,10 @@ dev_dependencies:
 ---  
 
 1. Create a new dart file and define a global var for your GetIt instance.
-2. Define a top-level function (lets call it configureDependencies) then annotate it with @injectableInit.
-3. Import the **Generated** dart file created later on in the code. This will follow the name of the file with the `@InjectableInit` annotated func, eg `file_name.config.dart`.
+2. Define a top-level function (lets call it configureDependencies) then annotate it with @FmvvmInit.
+3. Import the **Generated** dart file created later on in the code. This will follow the name of the file with the `@FmvvmInit` annotated func, eg `file_name.config.dart`.
 4. Call the **Generated** extension func getIt.init(), or your custom initializer name inside your configure func.
-	
+
 Note: This example is for version 2+
 
 
@@ -61,7 +62,7 @@ import '<FILE_NAME>.config.dart';
 	
 final getIt = GetIt.instance;  
   
-@InjectableInit(  
+@FmvvmInit(  
   initializerName: 'init', // default  
   preferRelativeImports: true, // default  
   asExtension: true, // default  
@@ -69,13 +70,13 @@ final getIt = GetIt.instance;
 void configureDependencies() => getIt.init();  
 ```  
 
-Note: you can tell injectable what directories to generate for using the generateForDir property inside of @injectableInit.    
+Note: you can tell injectable what directories to generate for using the generateForDir property inside of @fmvvmInit.    
 The following example will only process files inside of the test folder.
 
 ```dart  
 import '<FILE_NAME>.config.dart';
 	
-@InjectableInit(generateForDir: ['test'])  
+@FmvvmInit(generateForDir: ['test'])  
 void configureDependencies() => getIt.init();  
 ```  
 
@@ -144,6 +145,66 @@ extension GetItInjectableX on _i1.GetIt {
 }  
 ```  
 
+## Registering View Models
+  
+---  
+All you have to do now is annotate your viewmodel classes with @viewModel or @singletonViewModel or @lazySingletonViewModel and let the generator do the work.
+
+```dart  
+@singletonViewModel
+class DemoViewModel extends ANavigableViewModel {
+  String _text = '';
+  String get text => _text;
+  set text(String text) {
+    _text = text;
+    notifyListeners();
+  }
+
+  DemoViewModel();
+}
+```
+
+And make your page extends from BasePage so you can have access to the bindingContext or you view model from the UI part.
+Your changes will be refelected to your UI, with no rebuild needed.
+
+
+```dart  
+class DemoViewPage extends BasePage<DemoViewModel> {
+  DemoViewPage({super.key}) : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              onChanged: (text) {
+                bindingContext.text = text;
+              },
+              decoration: InputDecoration(labelText: 'Enter your text'),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Entered Text:',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              bindingContext.text,
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```  
+
 ## Registering singletons
   
 ---  
@@ -158,7 +219,7 @@ class ApiProvider {}
 
 ## Disposing of singletons
 
-GetIt provides a way to dispose singleton and lazySingleton instances by passing a dispose callback to the register function.  Injectable works in the static realm, which means it's not possible to pass instance functions to your annotation; luckily injectable provides two simple ways to handle instance disposal.
+GetIt provides a way to dispose singleton and lazySingleton instances by passing a dispose callback to the register function.  FMVVM works in the static realm, which means it's not possible to pass instance functions to your annotation; luckily fmvvm provides two simple ways to handle instance disposal.
 
 1- Annotating an instance method inside of your singleton class with `@disposeMethod`.
 
@@ -191,7 +252,7 @@ FutureOr disposeDataSource(DataSource instance){
 
 ## FactoryMethod and PostConstruct Annotations
 
-As the name suggests `@FactoryMethod` annotation is used to tell injectable which method to use to create the dependency, and that includes named constructors, factory constructs and static create methods.
+As the name suggests `@FactoryMethod` annotation is used to tell fmvvm which method to use to create the dependency, and that includes named constructors, factory constructs and static create methods.
 
 ```dart  
 @injectable  
@@ -250,7 +311,7 @@ class ApiClient {
 }  
 ```  
 
-Now simply annotate your class with `@injectable` and tell injectable to use that static initializer method as a factory method using the `@factoryMethod` annotation
+Now simply annotate your class with `@injectable` and tell fmvvm to use that static initializer method as a factory method using the `@factoryMethod` annotation
 
 ```dart  
 @injectable // or lazy/singleton  
@@ -263,7 +324,7 @@ class ApiClient {
 }  
 ```  
 
-injectable will automatically register it as an asynchronous factory because the return type is a Future.
+fmvvm will automatically register it as an asynchronous factory because the return type is a Future.
 
 #### Generated Code:
 
@@ -373,9 +434,9 @@ factoryParam<BackendService, String, dynamic>(
 
 ### Using a register module (for third party dependencies)
 
-if you declare a module member as a method instead of a simple accessor, injectable will treat it as a factory method, meaning it will inject its parameters as it would with a regular constructor.
+if you declare a module member as a method instead of a simple accessor, fmvvm will treat it as a factory method, meaning it will inject its parameters as it would with a regular constructor.
 
-This is similar to how if you annotate an injected param with `@factoryParam` injectable will treat it as a factory param.
+This is similar to how if you annotate an injected param with `@factoryParam` fmvvm will treat it as a factory param.
 
 ```dart  
 @module  
@@ -503,7 +564,7 @@ You can assign multiple environment names to the same class.
 class ServiceA {}  
 ```  
 
-Alternatively use the env property in injectable and subs to assign environment names to your dependencies.
+Alternatively use the env property in fmvvm and subs to assign environment names to your dependencies.
 
 ```dart  
 @Injectable(as: Service, env: [Environment.dev, Environment.test])  
@@ -537,7 +598,7 @@ abstract class RegisterModule {
 
 ### Providing custom initializers
 
-In some cases you'd need to register instances that are asynchronous or singleton instances or just have a custom initializer and that's a bit hard for injectable to figure out on its own, so you need to tell injectable how to initialize them:
+In some cases you'd need to register instances that are asynchronous or singleton instances or just have a custom initializer and that's a bit hard for fmvvm to figure out on its own, so you need to tell fmvvm how to initialize them:
 
 ```dart  
 @module  
@@ -551,7 +612,7 @@ abstract class RegisterModule {
   Dio dio(@Named('BaseUrl') String url) => Dio(BaseOptions(baseUrl: url));  
   
   // same thing works for instances that's gotten asynchronous.  
-  // all you need to do is wrap your instance with a future and tell injectable how  
+  // all you need to do is wrap your instance with a future and tell fmvvm how  
   // to initialize it  
   @preResolve // if you need to pre resolve the value  
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();  
@@ -576,7 +637,7 @@ To use auto-register create a file with the name **build.yaml** in the same dire
 targets:  
   $default:  
     builders:  
-      injectable_generator:injectable_builder:  
+      fmvvm_generator:injectable_builder:  
         options:  
           auto_register: true  
           # auto registers any class with a name matches the given pattern  
@@ -589,7 +650,7 @@ targets:
 
 ## Manual order
 
-By default injectable tries to re-order dependencies based on their dependents, meaning if `A` depends on `B`, `B` will be registered first.
+By default fmvvm tries to re-order dependencies based on their dependents, meaning if `A` depends on `B`, `B` will be registered first.
 
 You can manually decide the order of a specific dependency by giving it a negative number to register it before everything else or a positive number to register it after everything else.
 
@@ -606,7 +667,7 @@ class Service{}
 
 GetIt v5.0 introduced scopes support, which allows registration of related dependencies in a different scope, so they can be initialized only when needed and disposed of when they're not. [More on that here.](https://pub.dev/packages/get_it#scopes)
 
-To use `GetIt` scopes using injectable you simply annotate the dependencies that are meant to be registered in a different scope with `@Scope('scope-name')` or pass in the scope name to Injectable or its subs like so `@Injectable(scope: 'scope-name')`.
+To use `GetIt` scopes using fmvvm you simply annotate the dependencies that are meant to be registered in a different scope with `@Scope('scope-name')` or pass in the scope name to Injectable or its subs like so `@Injectable(scope: 'scope-name')`.
 
 dependencies tagged with a scope name will be generated inside of a separate init method than the other main-scope dependencies.  
 e.g.
@@ -634,11 +695,11 @@ when you're ready to use the auth-scope, call the generated scope-init method or
 ## Including microPackages and external modules
 
 MicroPackages are sub packages that can be depended on and used by the root package, packages that's annotated as micro will generate a `MicroPackageModule` instead of an init-method and the initiation of those modules is done automatically by the root package's init-method.  
-so all you have to do is annotate the package as a microPackage by using the named constructor `@InjectableInit.microPackage()`
+so all you have to do is annotate the package as a microPackage by using the named constructor `@FmvvmInit.microPackage()`
 
 ```dart  
 // @microPackageInit => short const  
-@InjectableInit.microPackage()  
+@FmvvmInit.microPackage()  
 initMicroPackage(){} // will not be called but needed for code generation  
 ```  
 
@@ -653,19 +714,19 @@ class AwesomePackageModule extends MicroPackageModule {
  }}  
 ```  
 
-By default injectable will automatically include all `MicroPackagesModules` in the project directory unless the `includeMicroPackages` flag inside of `@InjectableInit` is set to false.
+By default fmvvm will automatically include all `MicroPackagesModules` in the project directory unless the `includeMicroPackages` flag inside of `@FmvvmInit` is set to false.
 
 ```dart
-@InjectableInit(includeMicroPackages: false)
+@FmvvmInit(includeMicroPackages: false)
 ```
 
-it's also possible to include micro local or external modules manually by passing them to the `externalPackageModules` property inside of @injectableInit so they're initialized with the rest of the local dependencies.  
+it's also possible to include micro local or external modules manually by passing them to the `externalPackageModules` property inside of @fmvvmInit so they're initialized with the rest of the local dependencies.  
 **Note:**
 Modules assigned to externalPackageModulesBefore will be initialized before the root dependencies;
 Modules assigned to externalPackageModulesAfter will be initialized after the root dependencies;
 
 ```dart  
-@InjectableInit(  
+@FmvvmInit(  
   externalPackageModulesBefore: [  
   ExternalModule(AwesomePackageModule),  
   ExternalModule(ThirdPartyMicroModule),  
@@ -679,7 +740,7 @@ void configureDependencies() {}
 #### Initializing modules inside of scopes
 External Modules can be initialized inside of specific scopes by simply assigning a scope to `ExternalModule`.
 ```dart
-@InjectableInit(  
+@FmvvmInit(  
   externalPackageModulesBefore: [  
 	  ExternalModule(AwesomePackageModule, scope: 'awesome'),  
  ], )  

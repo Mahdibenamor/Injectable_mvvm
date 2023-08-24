@@ -1,3 +1,3 @@
-# injectable_generator
+# fmvvm_generator
 
-A generator for [injectable](https://pub.dev/packages/injectable) library.
+A generator for [fmvvm](https://pub.dev/packages/injectable) library.
