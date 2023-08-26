@@ -3,8 +3,8 @@
 <a href="https://img.shields.io/badge/License-MIT-green"><img     
 align="center" src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>      
 <a href="https://github.com/Mahdibenamor/Injectable_mvvm/stargazers"><img align="center" src="https://img.shields.io/github/stars/Mahdibenamor/Injectable_mvvm?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>      
-<a href="https://pub.dev/packages/injectable"><img     
-align="center" src="https://img.shields.io/pub/v/injectable.svg?" alt="pub version"></a>      
+<a href="https://pub.dev/packages/injectable_mvvm"><img     
+align="center" src="https://img.shields.io/pub/v/injectable_mvvm.svg?" alt="pub version"></a>      
 <a href="https://www.buymeacoffee.com/mahdibenamor"target="_blank"><img align="center" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>    
 <p >  
   

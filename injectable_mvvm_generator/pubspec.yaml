@@ -14,9 +14,8 @@ dependencies:
   analyzer: ">=5.8.0 <7.0.0"
   code_builder: ^4.4.0
   dart_style: ^2.0.3
-  injectable_mvvm:
-#    ^2.3.0
-    path: ../injectable_mvvm
+  injectable_mvvm: ^0.1.0
+    #path: ../injectable_mvvm
   collection: ^1.17.1
   recase: ^4.1.0
   meta: ^1.9.1

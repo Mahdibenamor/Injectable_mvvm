@@ -8,8 +8,8 @@ dependencies:
   flutter:
     sdk: flutter
   get_it:  ">=7.0.0 <8.0.0"
-  injectable_mvvm:
-    path: ../../injectable_mvvm
+  injectable_mvvm: ^0.1.0
+
 
 
 dev_dependencies:
